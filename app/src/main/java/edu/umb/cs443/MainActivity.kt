@@ -68,7 +68,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onMapReady(map: GoogleMap) {
         mMap = map
-        val defaultLocation = LatLng(42.314083, -71.037929)
+        val defaultLocation = LatLng(42.3554334, -71.060511)
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultLocation, 12f))
         mMap.uiSettings.apply {
             isZoomControlsEnabled = true
@@ -76,6 +76,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
+    /**
+     * Processes the JSON response from a weather API call and updates the UI with the current temperature and weather icon.
+     *
+     * @param result The JSON string containing the weather data, or null if an error occurred during retrieval.
+     */
     fun processWeatherJson(result: String?) {
         if (result == null) return
         try {
@@ -96,6 +101,14 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
+    /**
+     * Downloads a weather icon from the specified URL and sets it to the ImageView in the UI.
+     *
+     * This function uses Kotlin Coroutines to perform the image download asynchronously on an IO-optimized thread,
+     * then switches to the main thread to update the UI with the downloaded image.
+     *
+     * @param url The URL of the weather icon to be downloaded and displayed.
+     */
     fun setWeatherIcon(url: String) {
         GlobalScope.launch(Dispatchers.IO) {
             try {
@@ -126,8 +139,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 var jStr = downloadUrl(query)
                 Log.d(DEBUG_TAG, "The response is: $jStr")
                 val ll: LatLng = processJStr(jStr)!!
+
+                // process from user input and update weather icon and temperature
                 ll.let { latLng ->
-                    var weatherUrl = "$weatherQuery$apikey&lat=${latLng.latitude}&lon=${latLng.longitude}"
+                    var weatherUrl = "$weatherQuery" + "lat=${latLng.latitude}&lon=${latLng.longitude}&exclude=hourly,daily,minutely$apikey"
                     val weatherResponse = downloadUrl(weatherUrl)
                     processWeatherJson(weatherResponse)
                 }
