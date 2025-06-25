@@ -1,5 +1,6 @@
 package edu.umb.cs443
 
+import android.graphics.BitmapFactory
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities.TRANSPORT_CELLULAR
 import android.net.NetworkCapabilities.TRANSPORT_WIFI
@@ -9,11 +10,12 @@ import android.view.KeyEvent
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
@@ -32,6 +34,7 @@ import java.net.URL
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var mMap: GoogleMap
+    private val weatherQuery = "https://api.openweathermap.org/data/3.0/onecall?"
     private val geoQuery= "https://api.openweathermap.org/geo/1.0/direct?q="
     private val apikey = "&appid=43537ee5cb4348e43f41344354cb2ef8"
 
@@ -65,6 +68,47 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onMapReady(map: GoogleMap) {
         mMap = map
+        val defaultLocation = LatLng(42.314083, -71.037929)
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultLocation, 12f))
+        mMap.uiSettings.apply {
+            isZoomControlsEnabled = true
+            isCompassEnabled = true
+        }
+    }
+
+    fun processWeatherJson(result: String?) {
+        if (result == null) return
+        try {
+            val jsonObj = JSONObject(result)
+            val current = jsonObj.getJSONObject("current")
+            val tempCelsius = current.getDouble("temp") - 273.15f
+
+            // get weather icon
+            val iconCode = current.getJSONArray("weather").getJSONObject(0).getString("icon")
+
+            // update UI
+            runOnUiThread {
+                findViewById<TextView>(R.id.textView).text = getString(R.string.temperature_format, tempCelsius)
+                setWeatherIcon("https://openweathermap.org/img/wn/$iconCode@2x.png")
+            }
+        } catch (e: Exception) {
+            Log.e(DEBUG_TAG, "Error on weather JSON parsing: $e")
+        }
+    }
+
+    fun setWeatherIcon(url: String) {
+        GlobalScope.launch(Dispatchers.IO) {
+            try {
+                URL(url).openStream().use { inputStream ->
+                    val bitMap = BitmapFactory.decodeStream(inputStream)
+                    withContext(Dispatchers.Main) {
+                        findViewById<ImageView>(R.id.imageView).setImageBitmap(bitMap)
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e(DEBUG_TAG, "Weather Image can't download: $e")
+            }
+        }
     }
 
     fun getWeatherInfo(){
@@ -82,6 +126,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 var jStr = downloadUrl(query)
                 Log.d(DEBUG_TAG, "The response is: $jStr")
                 val ll: LatLng = processJStr(jStr)!!
+                ll.let { latLng ->
+                    var weatherUrl = "$weatherQuery$apikey&lat=${latLng.latitude}&lon=${latLng.longitude}"
+                    val weatherResponse = downloadUrl(weatherUrl)
+                    processWeatherJson(weatherResponse)
+                }
                 Log.d(DEBUG_TAG, "Lat, Log: ${ll.latitude}, ${ll.longitude}")
             }
         } else {
