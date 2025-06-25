@@ -1,6 +1,6 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools" android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
@@ -11,23 +11,23 @@
         android:layout_height="wrap_content" >
 
         <Button
-            android:id="@+id/button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="OK"
-            android:layout_alignBottom="@+id/editText"
-            android:layout_toRightOf="@+id/editText"
-            android:layout_gravity="right" />
+                android:id="@+id/button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/ok"
+                android:layout_alignBottom="@+id/editText"
+                android:layout_toEndOf="@+id/editText"
+                android:layout_gravity="right" tools:ignore="RtlHardcoded"/>
 
         <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:id="@+id/editText"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:hint="Enter a city"
-            android:layout_gravity="right" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:id="@+id/editText"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentStart="true"
+                android:hint="@string/enter_a_city"
+                android:layout_gravity="right" tools:ignore="RtlHardcoded"/>
 
     </RelativeLayout>
 
@@ -38,21 +38,22 @@
         android:layout_height="wrap_content" >
 
         <ImageView
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:id="@+id/imageView"
-            android:layout_alignBottom="@+id/textView"
-            android:layout_toRightOf="@+id/textView"
-            android:layout_gravity="center_horizontal"
-            android:paddingLeft="10dp"/>
-
+                android:layout_width="60dp"
+                android:layout_height="64dp"
+                android:id="@+id/imageView"
+                android:layout_alignBottom="@+id/textView"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:paddingStart="10dp" android:layout_marginStart="4dp" android:layout_marginBottom="0dp"
+                tools:ignore="RtlSymmetry"/>
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text=""
-            android:id="@+id/textView"
-            android:textSize="50dp" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text=""
+                android:id="@+id/textView"
+                android:layout_toEndOf="@id/imageView"
+                android:textSize="50sp" android:layout_marginStart="19dp"/>
 
     </RelativeLayout>
     <androidx.fragment.app.FragmentContainerView
