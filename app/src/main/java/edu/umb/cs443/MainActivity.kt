@@ -68,7 +68,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onMapReady(map: GoogleMap) {
         mMap = map
-        val defaultLocation = LatLng(42.3554334, -71.060511)
+        val defaultLocation = LatLng(42.3554334, -71.060511) // Boston
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultLocation, 12f))
         mMap.uiSettings.apply {
             isZoomControlsEnabled = true
