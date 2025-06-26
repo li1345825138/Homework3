@@ -142,7 +142,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             Log.d(DEBUG_TAG, "The query URL is: $query")
             // Log.i("MyTag", query);
             GlobalScope.launch {
-                var jStr = downloadUrl(query)
+                var jStr = downloadUrl(query).replace("[^\\p{Print}]".toRegex(), "")
                 Log.d(DEBUG_TAG, "The response is: $jStr")
                 val ll: LatLng = processJStr(jStr)!!
 
