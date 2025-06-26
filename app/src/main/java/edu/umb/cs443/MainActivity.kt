@@ -95,6 +95,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             runOnUiThread {
                 findViewById<TextView>(R.id.textView).text = getString(R.string.temperature_format, tempCelsius)
                 setWeatherIcon("https://openweathermap.org/img/wn/$iconCode@2x.png")
+
+                // update google map
+                val newLat = jsonObj.getDouble("lat")
+                val newLon = jsonObj.getDouble("lon")
+                val newLocation = LatLng(newLat, newLon)
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(newLocation, 12f), 3000, null)
             }
         } catch (e: Exception) {
             Log.e(DEBUG_TAG, "Error on weather JSON parsing: $e")
