@@ -15,6 +15,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -116,7 +117,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
      * @param url The URL of the weather icon to be downloaded and displayed.
      */
     fun setWeatherIcon(url: String) {
-        GlobalScope.launch(Dispatchers.IO) {
+        lifecycleScope.launch(Dispatchers.IO) {
             try {
                 URL(url).openStream().use { inputStream ->
                     val bitMap = BitmapFactory.decodeStream(inputStream)
