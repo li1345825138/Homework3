@@ -71,10 +71,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         mMap = map
         val defaultLocation = LatLng(42.3554334, -71.060511) // Boston
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultLocation, 12f))
-        mMap.uiSettings.apply {
-            isZoomControlsEnabled = true
-            isCompassEnabled = true
-        }
     }
 
     /**
@@ -142,7 +138,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             var query = geoQuery+cityname+"&limit=1"+apikey
             Log.d(DEBUG_TAG, "The query URL is: $query")
             // Log.i("MyTag", query);
-            lifecycleScope.launch {
+            GlobalScope.launch {
                 var jStr = downloadUrl(query).replace("[^\\p{Print}]".toRegex(), "")
                 Log.d(DEBUG_TAG, "The response is: $jStr")
                 val ll: LatLng = processJStr(jStr)!!
