@@ -16,6 +16,7 @@ import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.google.android.gms.maps.CameraUpdate
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -69,7 +70,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onMapReady(map: GoogleMap) {
         mMap = map
-        val defaultLocation = LatLng(42.3554334, -71.060511) // Boston
+        val defaultLocation = LatLng(42.3554, -71.0605) // default: Boston
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultLocation, 12f))
     }
 
@@ -89,15 +90,14 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             val iconCode = current.getJSONArray("weather").getJSONObject(0).getString("icon")
 
             // update UI
-            runOnUiThread {
-                findViewById<TextView>(R.id.textView).text = getString(R.string.temperature_format, tempCelsius)
-                setWeatherIcon("https://openweathermap.org/img/wn/$iconCode@2x.png")
-
-                // update google map
-                val newLat = jsonObj.getDouble("lat")
-                val newLon = jsonObj.getDouble("lon")
-                val newLocation = LatLng(newLat, newLon)
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(newLocation, 12f), 3000, null)
+            lifecycleScope.launch {
+                withContext(Dispatchers.Main) {
+                    val tempTextView: TextView = findViewById(R.id.textView)
+                    tempTextView.text = getString(R.string.temperature_format, tempCelsius)
+                    setWeatherIcon("https://openweathermap.org/img/wn/$iconCode@2x.png")
+                    val newLocation = LatLng(jsonObj.getDouble("lat"), jsonObj.getDouble("lon"))
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(newLocation, 12f))
+                }
             }
         } catch (e: Exception) {
             Log.e(DEBUG_TAG, "Error on weather JSON parsing: $e")
@@ -115,6 +115,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     fun setWeatherIcon(url: String) {
         lifecycleScope.launch(Dispatchers.IO) {
             try {
+                // stream could auto close by using "use"
                 URL(url).openStream().use { inputStream ->
                     val bitMap = BitmapFactory.decodeStream(inputStream)
                     withContext(Dispatchers.Main) {
