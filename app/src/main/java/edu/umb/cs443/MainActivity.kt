@@ -70,11 +70,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     /**
-     * Processes the JSON response from a weather API call and updates the UI with the current temperature and weather icon.
+     * Processes the weather JSON response and updates UI elements with current weather data.
      *
-     * @param result The JSON string containing the weather data, or null if an error occurred during retrieval.
+     * @param result The raw JSON string containing weather information
+     * @param ll The geographic coordinates used for the map view
      */
-    fun processWeatherJson(result: String?) {
+    fun processWeatherJson(result: String?, ll: LatLng) {
         if (result == null) return
         try {
             val jsonObj = JSONObject(result)
@@ -90,8 +91,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                     val tempTextView: TextView = findViewById(R.id.textView)
                     tempTextView.text = getString(R.string.temperature_format, tempCelsius)
                     setWeatherIcon("https://openweathermap.org/img/wn/$iconCode@2x.png")
-                    val newLocation = LatLng(jsonObj.getDouble("lat"), jsonObj.getDouble("lon"))
-                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(newLocation, 12f))
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(ll, 12f))
                 }
             }
         } catch (e: Exception) {
@@ -143,7 +143,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 ll.let { latLng ->
                     var weatherUrl = "$weatherQuery" + "lat=${latLng.latitude}&lon=${latLng.longitude}&exclude=hourly,daily,minutely$apikey"
                     val weatherResponse = downloadUrl(weatherUrl)
-                    processWeatherJson(weatherResponse)
+                    processWeatherJson(weatherResponse, latLng)
                 }
                 Log.d(DEBUG_TAG, "Lat, Log: ${ll.latitude}, ${ll.longitude}")
             }
