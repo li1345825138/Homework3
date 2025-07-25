@@ -154,46 +154,9 @@ app/
 - **Permissions**: 
   - `INTERNET` permission in AndroidManifest.xml
 
-## Error Handling
-
-- Network connectivity validation
-- JSON parsing error handling
-- API response error management
-- Graceful fallback for failed requests
-
 ## Course Information
 
 This project was developed as part of:
 - **Course**: CS443 - Mobile Application Development
 - **Institution**: University of Massachusetts Boston (UMB)
 - **Assignment**: Homework 3
-
-## License
-
-This project is for educational purposes as part of coursework requirements.
-
-## Contributing
-
-This is a homework assignment. Please respect academic integrity policies.
-
-## Troubleshooting
-
-### Common Issues
-
-1. **Maps not loading**: Check Google Maps API key configuration
-2. **Weather data not updating**: Verify OpenWeatherMap API key and network connection
-3. **App crashes on startup**: Ensure all dependencies are properly synced
-
-### Debug Information
-
-The app uses logging with tag `edu.umb.cs443.MYMSG` for debugging purposes.
-
-## Future Enhancements
-
-Potential improvements could include:
-- Extended weather forecast (hourly/daily)
-- Weather alerts and notifications
-- Multiple location bookmarks
-- Temperature unit conversion (Celsius/Fahrenheit)
-- Dark mode support
-- Offline data caching
